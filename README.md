@@ -1,1 +1,1 @@
-# bingolotto
+xtralars.github.io/bingolotto
