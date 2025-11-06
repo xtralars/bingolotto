@@ -1,0 +1,270 @@
+/* --- NEW: Preloader Styles --- */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #0b192f; /* Matches your body background */
+  z-index: 9999; /* Stays on top of everything */
+  display: grid;
+  place-items: center;
+  transition: opacity 0.5s ease-out; /* For the fade-out */
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fdfdfa; /* Matches your card color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* This class will be added by JS to fade the loader */
+#preloader.loaded {
+  opacity: 0;
+  /* Hides it from mouse clicks after it fades */
+  pointer-events: none; 
+}
+/* --- End of new code --- */
+/* --- Global Styles --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #0b192f;
+  background-image: radial-gradient(circle, #1a2947 0%, #0b192f 100%);
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+/* --- Main Container (The "Card") --- */
+#container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 40px;
+  background: #fdfdfa;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 1600px;
+  border: 1px solid #ddd;
+}
+
+/* --- Game Area (Column 1) --- */
+#game-area {
+  flex: 3;
+  min-width: 0;
+}
+
+/* --- Sidebar (Column 2) --- */
+#sidebar {
+  flex: 2;
+  min-width: 0;
+  position: sticky;
+  top: 40px;
+  text-align: center; /* Center the new button */
+}
+
+/* --- NEW: Music Button Styles --- */
+#music-control {
+  margin-bottom: 20px;
+}
+
+#music-toggle-button {
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 2px solid #aaa;
+  border-radius: 50%;
+  background-color: #fff;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#music-toggle-button:hover {
+  background-color: #f4f4f4;
+  color: #000;
+  border-color: #888;
+}
+
+/* --- Title (now in sidebar) --- */
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4.5rem;
+  color: #222;
+  margin-bottom: 25px;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* --- The Lottery Grid --- */
+#grid-container {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-gap: 8px;
+}
+
+/* --- The Input Boxes --- */
+.box {
+  height: 60px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: #333;
+  padding: 2px;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.box:focus {
+  outline: 0;
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+}
+
+/* --- Animation States --- */
+.highlighted {
+  background-color: #fffb8f;
+  transform: scale(1.15);
+  box-shadow: 0 0 15px #fffb8f;
+  border-color: #FDD835;
+  z-index: 10;
+}
+
+.selected {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+.winner {
+  background-color: #FFD700;
+  color: #111;
+  font-weight: 700;
+  transform: scale(1.25);
+  border-color: #FFA000;
+  box-shadow: 0 0 25px #FFD700;
+  z-index: 20;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1.25); box-shadow: 0 0 25px #FFD700; }
+  50% { transform: scale(1.3); box-shadow: 0 0 35px #FFD700; }
+  100% { transform: scale(1.25); box-shadow: 0 0 25px #FFD700; }
+}
+
+/* --- Button Container --- */
+#button-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* --- Button Styles --- */
+#start-button,
+#reset-button {
+  padding: 12px 30px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* <-- THIS IS THE FIXED LINE */
+}
+
+#start-button { background-color: #28a745; }
+#start-button:hover { background-color: #218838; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); }
+#start-button:disabled { background-color: #aaa; cursor: not-allowed; transform: none; box-shadow: none; }
+#reset-button { background-color: #dc3545; }
+#reset-button:hover { background-color: #c82333; transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); }
+
+/* --- Winner List Styles --- */
+#winner-list-container {
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 2px solid #eee;
+  text-align: left;
+}
+
+#winner-list-container h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: #444;
+  margin-bottom: 15px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+#winner-list {
+  list-style: decimal;
+  padding-left: 30px;
+  margin: 0;
+}
+
+#winner-list li {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ccc;
+}
+#winner-list li:last-child { border-bottom: none; }
+#winner-list:empty::after { content: 'No winners drawn yet.'; font-style: italic; font-weight: 400; color: #888; }
+
+
+/* --- Media Query for Responsiveness --- */
+@media (max-width: 1024px) {
+  #container {
+    flex-direction: column;
+    max-width: 700px;
+    padding: 25px;
+  }
+
+  body {
+    padding: 10px;
+  }
+
+  #sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  #grid-container {
+    margin-bottom: 30px;
+  }
+}
