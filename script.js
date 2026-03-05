@@ -22,8 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     /* --- Random Song Loader --- */
     const songs = [
-      'music.mp3',
-      'music2.mp3',
+      'price.mp3',
+      'roundball.mp3',
+      'aerobic.mp3',
       
       // add as many as you like
     ];
@@ -258,3 +259,4 @@ function playTick(frequency = 600, duration = 0.06) {
       if (targetIndex !== -1) boxes[targetIndex].focus();
     });
 });
+
