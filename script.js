@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const startButton = document.getElementById('start-button');
     const resetButton = document.getElementById('reset-button');
     const winnerList = document.getElementById('winner-list');
+    const tittel = document.getElementById('lottotitle');
 
     const winSound = new Audio('success.mp3');
 
@@ -19,6 +20,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* --- Web Audio API Tick Sound --- */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    /* --- Random Song Loader --- */
+    const songs = [
+      'music.mp3',
+      'music2.mp3',
+      
+      // add as many as you like
+    ];
+
+const randomSong = songs[Math.floor(Math.random() * songs.length)];
+musicPlayer.src = randomSong;
+
+const songTitle = randomSong.replace(/\.mp3$/, "");
+tittel.innerText = songTitle;
 
 function playTick(frequency = 600, duration = 0.06) {
   // --- Layer 1: Tonal click ---
