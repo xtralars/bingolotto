@@ -82,6 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
     musicPlayer.src = randomSong;
 
+    const tittel = document.getElementById('lottotitle');
+    const songTitle = randomSong.replace(/\.mp3$/, "");
+    tittel.innerText = songTitle;
+
     let boxes = [];
 
     // Create 10x10 grid of editable boxes
@@ -288,3 +292,4 @@ document.addEventListener('DOMContentLoaded', function() {
       if (targetIndex !== -1) boxes[targetIndex].focus();
     });
 });
+
