@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const startButton = document.getElementById('start-button');
     const resetButton = document.getElementById('reset-button');
     const winnerList = document.getElementById('winner-list');
-    const tittel = document.getElementById('lottotitle');
 
     const winSound = new Audio('success.mp3');
 
@@ -20,72 +19,68 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* --- Web Audio API Tick Sound --- */
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playTick(frequency = 600, duration = 0.06) {
+      // --- Layer 1: Tonal click ---
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      osc.connect(filter);
+      filter.connect(oscGain);
+      oscGain.connect(audioCtx.destination);
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(frequency * 0.4, audioCtx.currentTime + duration);
+
+      filter.type = 'highpass';
+      filter.frequency.value = 200;
+
+      oscGain.gain.setValueAtTime(0, audioCtx.currentTime);
+      oscGain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.004);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + duration);
+
+      // --- Layer 2: Noise thud ---
+      const bufferSize = audioCtx.sampleRate * 0.05;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1);
+      }
+
+      const noise = audioCtx.createBufferSource();
+      const noiseGain = audioCtx.createGain();
+      const noiseFilter = audioCtx.createBiquadFilter();
+
+      noise.buffer = buffer;
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(audioCtx.destination);
+
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = 1200;
+      noiseFilter.Q.value = 0.8;
+
+      noiseGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+
+      noise.start(audioCtx.currentTime);
+      noise.stop(audioCtx.currentTime + 0.05);
+    }
+
     /* --- Random Song Loader --- */
     const songs = [
-      'price.mp3',
-      'roundball.mp3',
       'aerobic.mp3',
-      
+      'roundball.mp3',
+      'price.mp3',
       // add as many as you like
     ];
-
-const randomSong = songs[Math.floor(Math.random() * songs.length)];
-musicPlayer.src = randomSong;
-
-const songTitle = randomSong.replace(/\.mp3$/, "");
-tittel.innerText = songTitle;
-
-function playTick(frequency = 600, duration = 0.06) {
-  // --- Layer 1: Tonal click ---
-  const osc = audioCtx.createOscillator();
-  const oscGain = audioCtx.createGain();
-  const filter = audioCtx.createBiquadFilter();
-
-  osc.connect(filter);
-  filter.connect(oscGain);
-  oscGain.connect(audioCtx.destination);
-
-  osc.type = 'square';
-  osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(frequency * 0.4, audioCtx.currentTime + duration);
-
-  filter.type = 'highpass';
-  filter.frequency.value = 200;
-
-  oscGain.gain.setValueAtTime(0, audioCtx.currentTime);
-  oscGain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 0.004);
-  oscGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime + duration);
-
-  // --- Layer 2: Noise thud ---
-  const bufferSize = audioCtx.sampleRate * 0.05;
-  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = (Math.random() * 2 - 1);
-  }
-
-  const noise = audioCtx.createBufferSource();
-  const noiseGain = audioCtx.createGain();
-  const noiseFilter = audioCtx.createBiquadFilter();
-
-  noise.buffer = buffer;
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(audioCtx.destination);
-
-  noiseFilter.type = 'bandpass';
-  noiseFilter.frequency.value = 1200;
-  noiseFilter.Q.value = 0.8;
-
-  noiseGain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-  noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
-
-  noise.start(audioCtx.currentTime);
-  noise.stop(audioCtx.currentTime + 0.05);
-}
+    const randomSong = songs[Math.floor(Math.random() * songs.length)];
+    musicPlayer.src = randomSong;
 
     let boxes = [];
 
@@ -103,7 +98,6 @@ function playTick(frequency = 600, duration = 0.06) {
     }
 
     function selectRandomBox() {
-      // Get all boxes that have text and are not already 'selected'
       const availableBoxes = boxes.filter(box => box.value.trim() !== '' && !box.classList.contains('selected'));
 
       if (availableBoxes.length === 0) {
@@ -113,13 +107,12 @@ function playTick(frequency = 600, duration = 0.06) {
 
       startButton.disabled = true;
 
-      // Pre-select a winner
       const winnerBox = availableBoxes[Math.floor(Math.random() * availableBoxes.length)];
       const winnerIndex = boxes.indexOf(winnerBox);
       const targetRow = Math.floor(winnerIndex / 10);
       const targetCol = winnerIndex % 10;
 
-      // STEP 1: Sweep Rows - smooth linear animation
+      // STEP 1: Sweep Rows
       function animateRows() {
         let displayRow = 0;
         let totalSteps = 0;
@@ -129,27 +122,22 @@ function playTick(frequency = 600, duration = 0.06) {
         let rowDelay = 80;
 
         function rowLoop() {
-          // Clear previous highlight
           boxes.forEach(b => b.classList.remove('row-highlight'));
 
-          // Highlight current row
           const rowStart = displayRow * 10;
           for (let i = 0; i < 10; i++) {
             boxes[rowStart + i].classList.add('row-highlight');
           }
 
-          // Rising pitch as it slows into the target row
           const progress = totalSteps / totalRowSteps;
           playTick(400 + progress * 400);
 
           if (totalSteps < totalRowSteps) {
             totalSteps++;
             displayRow = (displayRow + 1) % 10;
-            // Slow down only in the final loop
-            rowDelay += (totalSteps >= fullLoopSteps) ? 40 : 5;
+            rowDelay += (totalSteps >= fullLoopSteps) ? 60 : 3;
             setTimeout(rowLoop, rowDelay);
           } else {
-            // Landed on targetRow — pause then move to cell sweep
             setTimeout(() => {
               boxes.forEach(b => b.classList.remove('row-highlight'));
               animateCells(targetRow, targetCol);
@@ -164,62 +152,103 @@ function playTick(frequency = 600, duration = 0.06) {
       function animateCells(targetRow, targetCol) {
         let currentCol = 0;
         let cellDelay = 80;
-        const totalSteps = 10 + targetCol;
+        const totalSteps = 30 + targetCol;
         let currentStep = 0;
 
         function cellLoop() {
           const rowStart = targetRow * 10;
 
-          // Remove previous highlight
           const prevIdx = ((currentCol - 1 + 10) % 10) + rowStart;
           boxes[prevIdx].classList.remove('highlighted');
 
-          // Add highlight to current
           const currentIdx = (currentCol % 10) + rowStart;
           boxes[currentIdx].classList.add('highlighted');
 
-          // Rising pitch as it slows into the target cell
           const progress = currentStep / totalSteps;
           playTick(400 + progress * 400);
 
-          cellDelay += (currentStep > totalSteps - 6) ? 80 : 10;
+          cellDelay += (currentStep > totalSteps - 8) ? 110 : 3;
 
           if (currentStep < totalSteps) {
             currentCol++;
             currentStep++;
             setTimeout(cellLoop, cellDelay);
           } else {
-            // Landed on winner
+            // Cell sweep done — hand off to fake-out
             boxes[currentIdx].classList.remove('highlighted');
-            winnerBox.classList.add('selected', 'winner');
-            winSound.play();
-            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-
-            const winnerName = winnerBox.value.trim();
-            const li = document.createElement('li');
-            li.textContent = winnerName;
-            winnerList.appendChild(li);
-
-            startButton.disabled = false;
+            maybeFakeOut(targetRow, targetCol);
           }
         }
 
         cellLoop();
       }
 
+      // STEP 2.5: Optional fake-out after cell sweep lands
+      function maybeFakeOut(targetRow, targetCol) {
+        const shouldFakeOut = Math.random() < 0.5;
+
+        if (!shouldFakeOut) {
+          finalizeWinner();
+          return;
+        }
+
+        // Only same row neighbours
+        const neighbours = [];
+        if (targetCol > 0) neighbours.push({ row: targetRow, col: targetCol - 1 }); // left
+        if (targetCol < 9) neighbours.push({ row: targetRow, col: targetCol + 1 }); // right
+
+        // If no neighbours available, skip fake-out
+        if (neighbours.length === 0) {
+          finalizeWinner();
+          return;
+        }
+
+        const fake = neighbours[Math.floor(Math.random() * neighbours.length)];
+        const fakeIndex = fake.row * 10 + fake.col;
+
+        // Flash the fake cell with suspense
+        boxes[fakeIndex].classList.add('highlighted');
+        playTick(850, 0.2);
+
+        setTimeout(() => {
+          boxes[fakeIndex].classList.remove('highlighted');
+
+          setTimeout(() => {
+            // Snap to real winner
+            playTick(1100, 0.12);
+            finalizeWinner();
+          }, 200);
+
+        }, 1200); // linger on fake for 1.2 seconds
+      }
+
+      function finalizeWinner() {
+        winnerBox.classList.add('selected', 'winner');
+        winSound.play();
+        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+
+        const winnerName = winnerBox.value.trim();
+        const li = document.createElement('li');
+        li.textContent = winnerName;
+        winnerList.appendChild(li);
+
+        startButton.disabled = false;
+      }
+
       animateRows();
     }
 
-    // Event listener for start button
+    // Start button
     startButton.addEventListener('click', function() {
-      // Remove 'winner' class but KEEP 'selected' so they stay marked as unavailable
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
       const winners = document.querySelectorAll('.winner');
       winners.forEach(winner => winner.classList.remove('winner'));
 
       selectRandomBox();
     });
 
-    // Event listener for reset button
+    // Reset button
     resetButton.addEventListener('click', function() {
       boxes.forEach(box => {
         box.value = '';
@@ -259,4 +288,3 @@ function playTick(frequency = 600, duration = 0.06) {
       if (targetIndex !== -1) boxes[targetIndex].focus();
     });
 });
-
