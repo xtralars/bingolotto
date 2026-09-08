@@ -74,9 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* --- Random Song Loader --- */
     const songs = [
-      'music1.mp3',
-      'music2.mp3',
-      'music3.mp3',
+      'aerobic.mp3',
+      'arsenal.mp3',
+      'roundball.mp3',
+      'price.mp3',
       // add as many as you like
     ];
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
