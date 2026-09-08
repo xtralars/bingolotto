@@ -284,6 +284,10 @@ document.addEventListener('DOMContentLoaded', function() {
         winSound.play();
         confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
 
+        // Background flash
+        document.body.classList.add('winner-flash');
+        setTimeout(() => document.body.classList.remove('winner-flash'), 800);
+
         const winnerName = winnerBox.value.trim();
         const li = document.createElement('li');
         li.textContent = winnerName;
