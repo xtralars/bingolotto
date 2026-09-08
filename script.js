@@ -74,10 +74,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     /* --- Random Song Loader --- */
     const songs = [
-      'aerobic.mp3',
-      'roundball.mp3',
-      'price.mp3',
-      'arsenal.mp3',
+      'music1.mp3',
+      'music2.mp3',
+      'music3.mp3',
       // add as many as you like
     ];
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
@@ -145,7 +144,52 @@ document.addEventListener('DOMContentLoaded', function() {
           } else {
             setTimeout(() => {
               boxes.forEach(b => b.classList.remove('row-highlight'));
-              animateCells(targetRow, targetCol);
+
+              // 35% chance the cell sweep runs on a neighbouring row first
+              const doRowFakeOut = Math.random() < 0.5;
+
+              if (doRowFakeOut && (targetRow > 0 || targetRow < 9)) {
+                // Pick a neighbouring row (above or below)
+                const rowOptions = [];
+                if (targetRow > 0) rowOptions.push(targetRow - 1);
+                if (targetRow < 9) rowOptions.push(targetRow + 1);
+                const fakeRow = rowOptions[Math.floor(Math.random() * rowOptions.length)];
+
+                // Pick a random FILLED col on that fake row
+                // Only consider cols directly above/below or diagonal (targetCol -1, 0, +1)
+                const nearCols = [targetCol - 1, targetCol, targetCol + 1].filter(c => c >= 0 && c <= 9);
+                const filledCols = nearCols.filter(c => {
+                  const box = boxes[fakeRow * 10 + c];
+                  return box.value.trim() !== '' && !box.classList.contains('selected');
+                });
+
+                // If no filled cells on that row, skip row fake-out
+                if (filledCols.length === 0) {
+                  animateCells(targetRow, targetCol, () => maybeFakeOut(targetRow, targetCol));
+                  return;
+                }
+
+                const fakeCol = filledCols[Math.floor(Math.random() * filledCols.length)];
+
+                // Run cell sweep on the fake row
+                animateCells(fakeRow, fakeCol, () => {
+                  // Briefly highlight the landed cell so it registers visually
+                  const landedIndex = fakeRow * 10 + fakeCol;
+                  boxes[landedIndex].classList.add('highlighted');
+                  playTick(850, 0.2);
+
+                  setTimeout(() => {
+                    boxes[landedIndex].classList.remove('highlighted');
+
+                    setTimeout(() => {
+                      maybeFakeOut(targetRow, targetCol);
+                    }, 300);
+
+                  }, 1200); // how long it lingers on the fake cell before jumping
+                });
+              } else {
+                animateCells(targetRow, targetCol, () => maybeFakeOut(targetRow, targetCol));
+              }
             }, 400);
           }
         }
@@ -154,14 +198,14 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // STEP 2: Sweep Cells
-      function animateCells(targetRow, targetCol) {
+      function animateCells(row, col, onComplete) {
         let currentCol = 0;
         let cellDelay = 80;
-        const totalSteps = 30 + targetCol;
+        const totalSteps = 30 + col;
         let currentStep = 0;
 
         function cellLoop() {
-          const rowStart = targetRow * 10;
+          const rowStart = row * 10;
 
           const prevIdx = ((currentCol - 1 + 10) % 10) + rowStart;
           boxes[prevIdx].classList.remove('highlighted');
@@ -172,16 +216,15 @@ document.addEventListener('DOMContentLoaded', function() {
           const progress = currentStep / totalSteps;
           playTick(400 + progress * 400);
 
-          cellDelay += (currentStep > totalSteps - 8) ? 110 : 3;
+          cellDelay += (currentStep > totalSteps - 8) ? 100 : 3;
 
           if (currentStep < totalSteps) {
             currentCol++;
             currentStep++;
             setTimeout(cellLoop, cellDelay);
           } else {
-            // Cell sweep done — hand off to fake-out
             boxes[currentIdx].classList.remove('highlighted');
-            maybeFakeOut(targetRow, targetCol);
+            onComplete();
           }
         }
 
@@ -197,12 +240,22 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
         }
 
-        // Only same row neighbours
+        // Only same row neighbours that have a value and aren't already selected
         const neighbours = [];
-        if (targetCol > 0) neighbours.push({ row: targetRow, col: targetCol - 1 }); // left
-        if (targetCol < 9) neighbours.push({ row: targetRow, col: targetCol + 1 }); // right
+        if (targetCol > 0) {
+          const leftBox = boxes[targetRow * 10 + targetCol - 1];
+          if (leftBox.value.trim() !== '' && !leftBox.classList.contains('selected')) {
+            neighbours.push({ row: targetRow, col: targetCol - 1 });
+          }
+        }
+        if (targetCol < 9) {
+          const rightBox = boxes[targetRow * 10 + targetCol + 1];
+          if (rightBox.value.trim() !== '' && !rightBox.classList.contains('selected')) {
+            neighbours.push({ row: targetRow, col: targetCol + 1 });
+          }
+        }
 
-        // If no neighbours available, skip fake-out
+        // If no valid neighbours, skip fake-out
         if (neighbours.length === 0) {
           finalizeWinner();
           return;
@@ -219,12 +272,11 @@ document.addEventListener('DOMContentLoaded', function() {
           boxes[fakeIndex].classList.remove('highlighted');
 
           setTimeout(() => {
-            // Snap to real winner
             playTick(1100, 0.12);
             finalizeWinner();
           }, 200);
 
-        }, 1200); // linger on fake for 1.2 seconds
+        }, 2000);
       }
 
       function finalizeWinner() {
@@ -293,4 +345,3 @@ document.addEventListener('DOMContentLoaded', function() {
       if (targetIndex !== -1) boxes[targetIndex].focus();
     });
 });
-
