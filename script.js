@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
       'arsenal.mp3',
       'roundball.mp3',
       'price.mp3',
+      'mysterySong1.mp3',
       // add as many as you like
     ];
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
