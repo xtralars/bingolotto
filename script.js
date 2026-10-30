@@ -285,7 +285,22 @@ document.addEventListener('DOMContentLoaded', function() {
       function finalizeWinner() {
         winnerBox.classList.add('selected', 'winner');
         winSound.play();
-        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+        const halloweenColors = ['#ff7a1a', '#8be02f', '#9b5de5', '#f3ead7'];
+const pumpkin = confetti.shapeFromText({ text: '🎃', scalar: 3 });
+const bat = confetti.shapeFromText({ text: '🦇', scalar: 3 });
+
+// Orange, green, purple and bone-white confetti
+confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: halloweenColors });
+
+// A smaller burst of pumpkins and bats on top
+confetti({
+  particleCount: 25,
+  spread: 100,
+  origin: { y: 0.6 },
+  shapes: [pumpkin, bat],
+  scalar: 3,
+  flat: true
+});
 
         // Background flash
         document.body.classList.add('winner-flash');
