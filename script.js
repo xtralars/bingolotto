@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* --- Random Song Loader --- */
     const songs = [
       'aerobic.mp3',
-      'arsenal.mp3',
+      'tijuana.mp3',
       'roundball.mp3',
       'price.mp3',
       'fridaylottery.mp3',
