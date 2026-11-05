@@ -283,39 +283,38 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       function finalizeWinner() {
-        winnerBox.classList.add('selected', 'winner');
-        winSound.play();
-        const halloweenColors = ['#ff7a1a', '#8be02f', '#9b5de5', '#f3ead7'];
-const pumpkin = confetti.shapeFromText({ text: '🎃', scalar: 3 });
-const bat = confetti.shapeFromText({ text: '🦇', scalar: 3 });
+  winnerBox.classList.add('selected', 'winner');
+  winSound.play();
 
-// Orange, green, purple and bone-white confetti
-confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: halloweenColors });
+  const autumnColors = ['#e8932f', '#b5651d', '#8c1d2f', '#d9b44a', '#7a8b3a'];
+  const leaf   = confetti.shapeFromText({ text: '🍂', scalar: 3 });
+  const maple  = confetti.shapeFromText({ text: '🍁', scalar: 3 });
+  const glass  = confetti.shapeFromText({ text: '🍷', scalar: 3 });
 
-// A smaller burst of pumpkins and bats on top
-confetti({
-  particleCount: 25,
-  spread: 100,
-  origin: { y: 0.6 },
-  shapes: [pumpkin, bat],
-  scalar: 3,
-  flat: true
-});
+  // Main burst in autumn colors
+  confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: autumnColors });
 
-        // Background flash
-        document.body.classList.add('winner-flash');
-        setTimeout(() => document.body.classList.remove('winner-flash'), 800);
+  // Leaves and a few wine glasses on top
+  confetti({
+    particleCount: 30,
+    spread: 100,
+    origin: { y: 0.6 },
+    shapes: [leaf, maple, leaf, maple, glass],
+    scalar: 3,
+    flat: true
+  });
 
-        const winnerName = winnerBox.value.trim();
-        const li = document.createElement('li');
-        li.textContent = winnerName;
-        winnerList.appendChild(li);
+  // Background flash
+  document.body.classList.add('winner-flash');
+  setTimeout(() => document.body.classList.remove('winner-flash'), 800);
 
-        startButton.disabled = false;
-      }
+  const winnerName = winnerBox.value.trim();
+  const li = document.createElement('li');
+  li.textContent = winnerName;
+  winnerList.appendChild(li);
 
-      animateRows();
-    }
+  startButton.disabled = false;
+}
 
     // Start button
     startButton.addEventListener('click', function() {
