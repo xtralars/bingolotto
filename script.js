@@ -283,26 +283,21 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       function finalizeWinner() {
-  winnerBox.classList.add('selected', 'winner');
-  winSound.play();
+        winnerBox.classList.add('selected', 'winner');
+        winSound.play();
+        const autumnColors = ['#e8932f', '#d9b44a', '#8c1d2f', '#b5451b', '#f4ead8'];
+        const leaf = confetti.shapeFromText({ text: '🍂', scalar: 3 });
+        const maple = confetti.shapeFromText({ text: '🍁', scalar: 3 });
 
-  const autumnColors = ['#e8932f', '#b5651d', '#8c1d2f', '#d9b44a', '#7a8b3a'];
-  const leaf   = confetti.shapeFromText({ text: '🍂', scalar: 3 });
-  const maple  = confetti.shapeFromText({ text: '🍁', scalar: 3 });
-  const glass  = confetti.shapeFromText({ text: '🍷', scalar: 3 });
-
-  // Main burst in autumn colors
-  confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: autumnColors });
-
-  // Leaves and a few wine glasses on top
-  confetti({
-    particleCount: 30,
-    spread: 100,
-    origin: { y: 0.6 },
-    shapes: [leaf, maple, leaf, maple, glass],
-    scalar: 3,
-    flat: true
-  });
+        confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 }, colors: autumnColors });
+        confetti({
+          particleCount: 25,
+          spread: 100,
+          origin: { y: 0.6 },
+          shapes: [leaf, maple],
+          scalar: 3,
+          flat: true
+        });
 
   // Background flash
   document.body.classList.add('winner-flash');
