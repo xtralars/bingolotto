@@ -71,15 +71,14 @@ document.addEventListener('DOMContentLoaded', function() {
       noise.start(audioCtx.currentTime);
       noise.stop(audioCtx.currentTime + 0.05);
     }
+    
 
     /* --- Random Song Loader --- */
     const songs = [
-      /*'aerobic.mp3',
+      'aerobic.mp3',
+      'price.mp3',
       'tijuana.mp3',
       'roundball.mp3',
-      'price.mp3',
-      'fridaylottery.mp3',*/
-      'ghostbusters.mp3',
       // add as many as you like
     ];
     const randomSong = songs[Math.floor(Math.random() * songs.length)];
@@ -299,17 +298,20 @@ document.addEventListener('DOMContentLoaded', function() {
           flat: true
         });
 
-  // Background flash
-  document.body.classList.add('winner-flash');
-  setTimeout(() => document.body.classList.remove('winner-flash'), 800);
+        // Background flash
+        document.body.classList.add('winner-flash');
+        setTimeout(() => document.body.classList.remove('winner-flash'), 800);
 
-  const winnerName = winnerBox.value.trim();
-  const li = document.createElement('li');
-  li.textContent = winnerName;
-  winnerList.appendChild(li);
+        const winnerName = winnerBox.value.trim();
+        const li = document.createElement('li');
+        li.textContent = winnerName;
+        winnerList.appendChild(li);
 
-  startButton.disabled = false;
-}
+        startButton.disabled = false;
+      }
+
+      animateRows();
+    }
 
     // Start button
     startButton.addEventListener('click', function() {
